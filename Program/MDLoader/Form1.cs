@@ -46,7 +46,10 @@ namespace MDLoader
         /// <returns></returns>
         private void PreviewKeydown(object sender, PreviewKeyDownEventArgs e)
         {
-            //屏蔽复制快捷键
+
+
+
+            //检测到粘贴键
             if (e.Control && e.KeyCode == Keys.V)
             {
                 if (Clipboard.ContainsData(DataFormats.Bitmap))
@@ -326,21 +329,31 @@ namespace MDLoader
         /// <returns></returns>
         public void OnContentChange()
         {
+            adapter.GetUserSideMD(webBrowser1);
+
+            if (adapter.GetIfModified())
+            {
+                if (!this.Text.EndsWith(" *")) this.Text = this.Text + " *";
+            }
+            else
+            {
+                if (this.Text.EndsWith(" *")) this.Text = this.Text.Substring(0, this.Text.Length - 2);
+            }
             if (adapter.Filename == "") return;
             try
             {
-                adapter.GetUserSideMD(webBrowser1);
                 List<string> updatedlist = adapter.CacheMDPictures(adapter.Filename);
                 HtmlDocument doc = webBrowser1.Document;
                 HtmlElementCollection elementcol = doc.GetElementsByTagName("img");  //搜索所有的 textarea 标签
+                System.Threading.Thread.Sleep(100);
                 foreach (HtmlElement ele in elementcol)
                 {
-                    Regex reg = new Regex(@"src=""(.*)"">");
+                    Regex reg = new Regex(@"src=""(.*)\?(.*)"">");
                     Match math = reg.Match(ele.OuterHtml);
                     String filename = math.Groups[1].Value;
                     if (updatedlist != null && updatedlist.Contains(filename))
                     {
-                        ele.OuterHtml = ele.OuterHtml.Replace("\">", "?id=" + DateTime.Now.Ticks + "\">");
+                        ele.OuterHtml = ele.OuterHtml.Replace("t=","id=");
                     }
                 }
             }
@@ -376,5 +389,42 @@ namespace MDLoader
             }
         }
 
+        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (adapter.GetIfModified())
+            {
+                var result = MessageBox.Show("文件修改尚未被保存，请问是否需要保存后退出。", "文件未保存", MessageBoxButtons.YesNoCancel);
+                if (result == DialogResult.Yes)
+                {
+                    if (string.IsNullOrEmpty(adapter.Filename))
+                    {
+                        adapter.GetUserSideMD(webBrowser1);
+                        DialogResult dr = saveFileDialog1.ShowDialog();
+                        //获取所打开文件的文件名,如果是多个文件选择FileNames
+                        string fileName = saveFileDialog1.FileName;
+                        if (dr == System.Windows.Forms.DialogResult.OK && !string.IsNullOrEmpty(fileName))
+                        {
+                            adapter.MdFilePath = fileName.Substring(0, fileName.LastIndexOf("\\"));
+                            adapter.Filename = fileName;
+                            webBrowser1.Refresh();
+                            adapter.SaveFile(adapter.Filename);
+                            this.Text = captain + "  " + adapter.Filename;
+                        }
+                        else
+                        {
+                            e.Cancel = true;
+                        }
+
+                    }
+                    else
+                    {
+                        adapter.SaveFile(adapter.Filename);
+                    }
+                }else if (result == DialogResult.Cancel)
+                {
+                    e.Cancel = true;
+                }
+            }
+        }
     }
 }

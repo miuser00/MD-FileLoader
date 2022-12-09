@@ -62,6 +62,7 @@
             this.Text = "参数设置";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.SetupForm_FormClosed);
             this.Load += new System.EventHandler(this.SetupForm_Load);
+            this.Resize += new System.EventHandler(this.SetupForm_Resize);
             this.ResumeLayout(false);
 
         }

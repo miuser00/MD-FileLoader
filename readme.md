@@ -29,33 +29,24 @@ MD FileLoader基于广泛应用开源的MD框架工具EditorMD，并在此基础
 
 * MDLoader
 	* MDLoader.csproj -C#项目文件
-		MDLoader.csproj.user
 	* Form1.CS -主窗体
-		* Form1.Designer.cs
-		* Form1.resx
 	* Adapter.cs -EditorMD 框架适配器
 	* file.CS -本地目录文件操作
 	* FTP.CS -FTP管理器
 	* setup.CS -配置管理器
-		* setup.Designer.cs
-		* setup.resx
 	* WebBrowser.cs -WebBrowser适配器
 	* version.txt -版本更新记录
 	* bin -发布版本
-		Debug -调试版本
-		Release -发布版本
-	bin_release -二进制发布版本
-		 * MDLoaderV0.4 -发布子版本号
 
 ## 设计原理简介
 
-EditorMD是一款非常便捷的基于html+JS的md编辑器框架，我们通过Windows内置的Webbrowser对齐进行包裹和自动化控制将这个编辑器框架进行了Winform平台化封装。具体分为以下几个步骤。
+EditorMD是一款非常便捷的基于html+JS的md编辑器框架，我们通过Windows内置的Webbrowser对其进行包裹和自动化控制，将这个编辑器框架进行了Winform平台化封装。具体分为以下几个步骤。
 
-1）根据Webbrowser的最小运行环境需求对.net平台内置的IE浏览器进行深度定制，使其同时兼容Windows7和Windows10。
-2）通过在JS层和C#层分别编写适配代码完成C#代码与EditorMD的基本数据交换，实现Winform桌面程序代码对Web框架的遥控。
-3）编写适配器，对需要域EditorMD进行交互的功能进行包裹，如提取图片信息，交换图片链接地址，代码区和预览区的数据同步等
-4）编写独立的FTP模块完成图片的服务器上传
-5 编写独立的xml配置模块，实现程序的配置功能
+1. 根据Webbrowser的最小运行环境需求对.net平台内置的IE浏览器进行深度定制，使其同时兼容Windows7和Windows10。
+2. 通过在JS层和C#层分别编写适配代码完成C#代码与EditorMD的基本数据交换，实现Winform桌面程序代码对Web框架的遥控。
+3. 编写适配器，对需要域EditorMD进行交互的功能进行包裹，如提取图片信息，交换图片链接地址，代码区和预览区的数据同步等
+4. 编写独立的FTP模块完成图片的服务器上传
+5. 编写独立的xml配置模块，实现程序的配置功能
 
 如果您在阅读代码时发生疑问欢迎与我取得联系，QQ:64034373，由于水平有限，bug在所难免，欢迎提交bug，对于有重要贡献的小伙伴将加入contributor列表。
 

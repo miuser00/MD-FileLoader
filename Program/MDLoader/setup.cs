@@ -25,6 +25,7 @@ using System.Xml.Serialization;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Security.Cryptography;
+using System.Reflection;
 
 namespace MDLoader
 {
@@ -46,9 +47,20 @@ namespace MDLoader
 
         private void SetupForm_Load(object sender, EventArgs e)
         {
-                prg_config.SelectedObject = cfg;
+            prg_config.SelectedObject = cfg;
+            MoveSplitterTo(prg_config, 160);
         }
-
+        public void MoveSplitterTo(PropertyGrid grid, int x)
+        {
+            // HEALTH WARNING: reflection can be brittle...
+            FieldInfo field = typeof(PropertyGrid)
+                .GetField("gridView",
+                    BindingFlags.NonPublic | BindingFlags.Instance);
+            field.FieldType
+                .GetMethod("MoveSplitterTo",
+                    BindingFlags.NonPublic | BindingFlags.Instance)
+                .Invoke(field.GetValue(grid), new object[] { x });
+        }
         private void btn_save_Click(object sender, EventArgs e)
         {
             cfg.SavetoFile(Application.StartupPath + "\\config.xml");
@@ -61,6 +73,12 @@ namespace MDLoader
             //Reload parameter form in case cancel the cange
            cfg=Config.LoadfromFile(Application.StartupPath + "\\config.xml");
 
+        }
+
+        private void SetupForm_Resize(object sender, EventArgs e)
+        {
+            btn_save.Left = this.Width - 236;
+            btn_save.Top = this.Height - 82;
         }
     }
     public class Config

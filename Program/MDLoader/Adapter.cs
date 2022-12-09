@@ -24,6 +24,8 @@ namespace MDLoader
         public String Filename = "";
         //md文件绝对路径
         public String MdFilePath = "";
+        //上次保存的内容，或者新打开的内容
+        public String LastSavedMdcontent = "";
         //图片资源的呈现方式，本地或者远程url
         public enum Picture_mode { local, remote };
         Picture_mode view;
@@ -112,6 +114,7 @@ namespace MDLoader
                 //读取md文件内容
                 StreamReader sr = new StreamReader(fileName);
                 Mdcontent = sr.ReadToEnd();
+                LastSavedMdcontent = Mdcontent;
                 sr.Close();
 
                 HtmlDocument doc = browser.Document;
@@ -136,6 +139,7 @@ namespace MDLoader
                 //读取md文件内容
                 StreamWriter sr = new StreamWriter(file);
                 sr.Write(Mdcontent);
+                LastSavedMdcontent = Mdcontent;
                 sr.Close();
                 return true;
             }
@@ -292,6 +296,17 @@ namespace MDLoader
                
             }
             SetUserSideMD(browser);
+        }
+        public bool GetIfModified()
+        {
+            if (LastSavedMdcontent == Mdcontent)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
         }
     }
 }
