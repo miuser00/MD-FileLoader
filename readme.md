@@ -4,7 +4,7 @@
 
 MD FileLoader是一个使用C#开发的轻量级MD编辑器，支持全部的MD标准语法，以及常见的MD扩展语法，如视频，html元素等。我们试图以最小的环境对MD文件的离线编写、在线上传等功能提供支持，以减轻网络文档编写的工作负担。
 
-![](./index/mdfileloader.png)
+![](./image/mdfileloader.png)
 
 
 MD FileLoader现支持以下功能
@@ -23,7 +23,7 @@ MD FileLoader 采用mit协议进行发布，源码完全公开，欢迎您使用
 
 MD FileLoader基于广泛应用开源的MD框架工具EditorMD，并在此基础上进行二次开发。 程序分为用户UI层，与框架适配层，二者基本分离。由于作者能力有限，程序代码力求以最小的代码量实现所需要的功能，不追求代码的严谨与优雅。基本功能结构如下：
 
-![](./index/frame.png)
+![](./image/frame.png)
 
 源代码目录结构如下：
 

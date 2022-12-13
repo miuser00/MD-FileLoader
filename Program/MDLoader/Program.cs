@@ -33,38 +33,10 @@ namespace MDLoader
                 System.Security.Principal.WindowsPrincipal principal = new System.Security.Principal.WindowsPrincipal(identity);
                 //判断当前登录用户是否为管理员
                 var isAdmin = principal.IsInRole(System.Security.Principal.WindowsBuiltInRole.Administrator);
+                //设置IE模式为IE9
+                SetWebbrowser.ChangeWebbrowserMode(9999);
+                Application.Run(new Form1());
 
-#if DEBUG
-            isAdmin = true;
-#endif
-                if (isAdmin)
-                {
-
-                    //如果是管理员，则直接运行
-                    Application.Run(new Form1());
-                }
-                else
-                {
-                    //创建启动对象
-                    System.Diagnostics.ProcessStartInfo startInfo = new System.Diagnostics.ProcessStartInfo();
-                    startInfo.UseShellExecute = true;
-                    startInfo.WorkingDirectory = Environment.CurrentDirectory;
-                    startInfo.FileName = Application.ExecutablePath;
-                    startInfo.Arguments = "\"" + fileName + "\"";
-
-                    //设置启动动作,确保以管理员身份运行
-                    startInfo.Verb = "runas";
-                    try
-                    {
-                        System.Diagnostics.Process.Start(startInfo);
-                    }
-                    catch
-                    {
-                        return;
-                    }
-                    //退出
-                    Application.Exit();
-                }
             }
             catch (Exception ex)
             {

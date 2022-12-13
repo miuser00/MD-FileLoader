@@ -23,27 +23,44 @@ namespace MDLoader
         /// 10000: Use IE10 settings
         /// 11000: Use IE11 settings
         /// </param>
-        public static void ChangeWebbrowserMode(int ieMode)
+        public static bool ChangeWebbrowserMode(int ieMode)
         {
             string appName = AppDomain.CurrentDomain.FriendlyName;
             string regPath = "";
-            if (Is64BitOperatingSystem())
-            {
-                regPath = @"SOFTWARE\WOW6432Node\Microsoft\Internet Explorer\MAIN\FeatureControl\FEATURE_BROWSER_EMULATION";
-            }
-            else
-            {
+
                 regPath = @"SOFTWARE\Microsoft\Internet Explorer\MAIN\FeatureControl\FEATURE_BROWSER_EMULATION";
-            }
-            using (RegistryKey ieMainKey = Registry.LocalMachine.OpenSubKey(
+                using (RegistryKey ieMainKey = Registry.CurrentUser.OpenSubKey(
                  regPath, true))
             {
                 var orignalMode = ieMainKey.GetValue(appName);
                 if (orignalMode == null || (int)orignalMode != ieMode)
                 {
                     ieMainKey.SetValue(appName, ieMode, RegistryValueKind.DWord);
+                    return true;
+                }else
+                {
+                    return false;
                 }
                 //
+            }
+        }
+        public static bool Is_Already_Set_Browser_Emulation()
+        {
+            string appName = AppDomain.CurrentDomain.FriendlyName;
+            string regPath = "";
+
+                regPath = @"SOFTWARE\Microsoft\Internet Explorer\MAIN\FeatureControl\FEATURE_BROWSER_EMULATION";
+            using (RegistryKey ieMainKey = Registry.CurrentUser.OpenSubKey(regPath, true))
+            {
+                var orignalMode = ieMainKey.GetValue(appName);
+                if (orignalMode != null )
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
             }
         }
 
@@ -107,159 +124,5 @@ namespace MDLoader
         static extern bool IsWow64Process(IntPtr hProcess, out bool wow64Process);
     }
 
-
-    public class WebBrowserEx :  WebBrowser
-
-    {
-
-        private const int WM_DROPFILES = 0x233;
-
-
-
-        [DllImport("shell32.dll")]
-
-        private static extern uint DragQueryFile(
-
-            IntPtr hDrop,
-
-            uint iFile,
-
-            StringBuilder lpszFile,
-
-            uint cch);
-
-
-
-        [DllImport("shell32.dll")]
-
-        private static extern void DragAcceptFiles(IntPtr hWnd, bool fAccept);
-
-
-
-        public WebBrowserEx()
-
-            : base()
-
-        {
-
-            base.AllowWebBrowserDrop = false;
-
-        }
-
-
-
-        public event DragFileEventHandler DragFile;
-
-
-
-        protected override void OnHandleCreated(EventArgs e)
-
-        {
-
-            base.OnHandleCreated(e);
-
-            if (!DesignMode)
-
-            {
-
-                DragAcceptFiles(Handle, true);
-
-            }
-
-        }
-
-
-
-        protected override void WndProc(ref Message m)
-
-        {
-
-            StringBuilder sb = new StringBuilder(1024);
-
-            if (m.Msg == WM_DROPFILES)
-
-            {
-
-                uint count = DragQueryFile(m.WParam, 0xffffffff, null, 0);
-
-                string[] files = new string[count];
-
-                for (uint i = 0; i < count; i++)
-
-                {
-
-                    DragQueryFile(m.WParam, i, sb, 1024);
-
-                    files[i] = sb.ToString();
-
-                }
-
-                OnDragFile(new DragFileEventArgs(files));
-
-                return;
-
-            }
-
-
-
-            base.WndProc(ref m);
-
-        }
-
-
-
-        protected virtual void OnDragFile(DragFileEventArgs e)
-
-        {
-
-            if (DragFile != null)
-
-            {
-
-                DragFile(this, e);
-
-            }
-
-        }
-
-    }
-
-
-
-    public delegate void DragFileEventHandler(
-
-        object sender,
-
-        DragFileEventArgs e);
-
-
-
-    public class DragFileEventArgs : EventArgs
-
-    {
-
-        private string[] _files;
-
-
-
-        public DragFileEventArgs(string[] files)
-
-        {
-
-            _files = files;
-
-        }
-
-
-
-        public string[] Files
-
-        {
-
-            get { return _files; }
-
-        }
-
-    }
 
 }
