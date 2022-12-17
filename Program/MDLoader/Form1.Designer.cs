@@ -47,14 +47,16 @@
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.关于ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.splitter1 = new System.Windows.Forms.Splitter();
-            this.panel1 = new System.Windows.Forms.Panel();
+            this.panel_upload = new System.Windows.Forms.Panel();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.panel2 = new System.Windows.Forms.Panel();
+            this.webBrowser1 = new System.Windows.Forms.WebBrowser();
             this.menuStrip1.SuspendLayout();
-            this.panel1.SuspendLayout();
+            this.panel_upload.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
+            this.panel2.SuspendLayout();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -140,7 +142,7 @@
             // 
             this.刷新ToolStripMenuItem.Name = "刷新ToolStripMenuItem";
             this.刷新ToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F5;
-            this.刷新ToolStripMenuItem.Size = new System.Drawing.Size(174, 22);
+            this.刷新ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.刷新ToolStripMenuItem.Text = "刷新";
             this.刷新ToolStripMenuItem.Click += new System.EventHandler(this.refreshToolStripMenuItem_Click);
             // 
@@ -148,7 +150,7 @@
             // 
             this.uploadpannelToolStripMenuItem.Name = "uploadpannelToolStripMenuItem";
             this.uploadpannelToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.F5)));
-            this.uploadpannelToolStripMenuItem.Size = new System.Drawing.Size(174, 22);
+            this.uploadpannelToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.uploadpannelToolStripMenuItem.Text = "上传面板";
             this.uploadpannelToolStripMenuItem.Click += new System.EventHandler(this.uploadpannelToolStripMenuItem_Click);
             // 
@@ -165,7 +167,7 @@
             // 
             this.参数设置ToolStripMenuItem.Name = "参数设置ToolStripMenuItem";
             this.参数设置ToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F8;
-            this.参数设置ToolStripMenuItem.Size = new System.Drawing.Size(145, 22);
+            this.参数设置ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.参数设置ToolStripMenuItem.Text = "参数设置";
             this.参数设置ToolStripMenuItem.Click += new System.EventHandler(this.configToolStripMenuItem_Click_1);
             // 
@@ -222,12 +224,12 @@
             // 
             // panel1
             // 
-            this.panel1.Controls.Add(this.dataGridView1);
-            this.panel1.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panel1.Location = new System.Drawing.Point(0, 572);
-            this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(1081, 128);
-            this.panel1.TabIndex = 24;
+            this.panel_upload.Controls.Add(this.dataGridView1);
+            this.panel_upload.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.panel_upload.Location = new System.Drawing.Point(0, 572);
+            this.panel_upload.Name = "panel1";
+            this.panel_upload.Size = new System.Drawing.Size(1081, 128);
+            this.panel_upload.TabIndex = 24;
             // 
             // dataGridView1
             // 
@@ -251,11 +253,23 @@
             // 
             // panel2
             // 
+            this.panel2.Controls.Add(this.webBrowser1);
             this.panel2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel2.Location = new System.Drawing.Point(0, 24);
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(1081, 538);
             this.panel2.TabIndex = 25;
+            // 
+            // webBrowser1
+            // 
+            this.webBrowser1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.webBrowser1.Location = new System.Drawing.Point(0, 0);
+            this.webBrowser1.MinimumSize = new System.Drawing.Size(20, 20);
+            this.webBrowser1.Name = "webBrowser1";
+            this.webBrowser1.Size = new System.Drawing.Size(1081, 538);
+            this.webBrowser1.TabIndex = 0;
+            this.webBrowser1.Navigating += new System.Windows.Forms.WebBrowserNavigatingEventHandler(this.webBrowser1_Navigating);
+            this.webBrowser1.PreviewKeyDown += new System.Windows.Forms.PreviewKeyDownEventHandler(this.webBrowser1_PreviewKeyDown);
             // 
             // Form1
             // 
@@ -264,12 +278,12 @@
             this.ClientSize = new System.Drawing.Size(1081, 700);
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.splitter1);
-            this.Controls.Add(this.panel1);
+            this.Controls.Add(this.panel_upload);
             this.Controls.Add(this.menuStrip1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "Form1";
-            this.Text = "MD FileLoader V0.43";
+            this.Text = "MD FileLoader V0.6";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Form1_FormClosed);
             this.Load += new System.EventHandler(this.Form1_Load);
@@ -277,8 +291,9 @@
             this.ClientSizeChanged += new System.EventHandler(this.Form1_ClientSizeChanged);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
-            this.panel1.ResumeLayout(false);
+            this.panel_upload.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
+            this.panel2.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -287,7 +302,7 @@
         #endregion
         private System.Windows.Forms.MenuStrip menuStrip1;
         private System.Windows.Forms.Splitter splitter1;
-        private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.Panel panel_upload;
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
         private System.Windows.Forms.DataGridView dataGridView1;
         private System.Windows.Forms.ToolStripMenuItem helpToolStripMenuItem;
@@ -308,6 +323,7 @@
         private System.Windows.Forms.ToolStripMenuItem uploadpannelToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem configToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem 参数设置ToolStripMenuItem;
+        private System.Windows.Forms.WebBrowser webBrowser1;
     }
 }
 

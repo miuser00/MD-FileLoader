@@ -33,6 +33,9 @@ namespace MDLoader
     public partial class SetupForm : Form
     {
         public static Config cfg;
+        /// <summary>
+        /// 从config.xml中加载配置到Config对象
+        /// </summary>
         public SetupForm()
         {
             cfg=Config.LoadfromFile(Application.StartupPath+"\\config.xml");
@@ -50,6 +53,11 @@ namespace MDLoader
             prg_config.SelectedObject = cfg;
             MoveSplitterTo(prg_config, 160);
         }
+        /// <summary>
+        /// 调整栏目宽度，由于这个方法本身的propertygrid没有公有方法支持，所以需要用反射技术调用私有方法实现
+        /// </summary>
+        /// <param name="grid"></param>
+        /// <param name="x"></param>
         public void MoveSplitterTo(PropertyGrid grid, int x)
         {
             // HEALTH WARNING: reflection can be brittle...

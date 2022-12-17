@@ -10,7 +10,8 @@ namespace MDLoader
     
     static class Program
     {
-        public static string fileName = "";
+        public static string mdFileToOpen = "";
+        public static string cacheFolder="";
         [STAThread]
         static void Main(string[] args)
         {
@@ -19,9 +20,14 @@ namespace MDLoader
                 Application.EnableVisualStyles();
                 Application.SetCompatibleTextRenderingDefault(false);
 
+                //计算当前的cache目录
+                string stamp = DateTime.Now.ToLongTimeString().ToString().Replace(":","");
+                cacheFolder = "Cache" + stamp;
+
+
                 //取得使用“打开方式”打开的文件名路径
                 string[] para = Environment.GetCommandLineArgs();
-                if (para.Length >= 2) fileName = para[1];
+                if (para.Length >= 2) mdFileToOpen = para[1];
 
                 //MessageBox.Show(fileName);
                 /**
@@ -43,12 +49,6 @@ namespace MDLoader
                 string str = GetExceptionMsg(ex, string.Empty);
                 MessageBox.Show(str, "系统错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-        }
-        static void Application_ThreadException(object sender, System.Threading.ThreadExceptionEventArgs e)
-        {
-            string str = GetExceptionMsg(e.Exception, e.ToString());
-            MessageBox.Show(str, "系统错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            //LogManager.WriteLog(str);
         }
 
         static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)

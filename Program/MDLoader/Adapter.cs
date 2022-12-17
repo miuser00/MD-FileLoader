@@ -28,9 +28,14 @@ namespace MDLoader
         public String LastSavedMdcontent = "";
         //图片资源的呈现方式，本地或者远程url
         public enum Picture_mode { local, remote };
-        Picture_mode view;
+        //Picture_mode view;
 
-        //加载MD文件的图片到缓冲目录
+        /// <summary>
+        /// 加载markdown文件中描述的图片到本地
+        /// 每次加载前会比对前次缓冲的目录，仅当缓冲区图片发生变化时重新加载图片缓存。
+        /// </summary>
+        /// <param name="fileName"></param>
+        /// <returns>已经缓冲的图片文件名</returns>
         public List<string> CacheMDPictures(string fileName)
         {
             List<string> old_PictureList = new List<string>(PiclistfromMD);
@@ -65,11 +70,11 @@ namespace MDLoader
                 {
                     //重新缓存所有文件
                     //删除缓存目录
-                    Files.DeleteFolder(Application.StartupPath + "\\readcache");
+                    MFiles.DeleteFolder(Application.StartupPath + "\\"+Program.cacheFolder+"");
                     //复制md文件解析框架文件index.html到缓存目录
                     string editorpath_org = Application.StartupPath + "\\editormd\\" + "index_0.html";
-                    string editorpath = Application.StartupPath + "\\readcache\\" + "index.html";
-                    Files.CopyFile(editorpath_org, editorpath);
+                    string editorpath = Application.StartupPath + "\\"+Program.cacheFolder+"\\" + "index.html";
+                    MFiles.CopyFile(editorpath_org, editorpath);
                 }
                 //复制所有图片
                 foreach (string original_img in file_to_upload)
@@ -84,14 +89,14 @@ namespace MDLoader
                     {
                         var original_full_img = original_img;
                         string namewithoutpath = System.IO.Path.GetFileName(original_img);
-                        var cached_full_image = Application.StartupPath + "\\readcache\\" + namewithoutpath;
-                        Files.CopyFile(original_full_img, cached_full_image);
+                        var cached_full_image = Application.StartupPath + "\\"+Program.cacheFolder+"\\" + namewithoutpath;
+                        MFiles.CopyFile(original_full_img, cached_full_image);
                     }
                     else
                     {
                         var original_full_img = path + "\\" + original_img.Replace("./", "").Replace("/", "\\");
-                        var cached_full_image = Application.StartupPath + "\\readcache\\" + original_img.Replace("./", "").Replace("/", "\\");
-                        Files.CopyFile(original_full_img, cached_full_image);
+                        var cached_full_image = Application.StartupPath + "\\"+Program.cacheFolder+"\\" + original_img.Replace("./", "").Replace("/", "\\");
+                        MFiles.CopyFile(original_full_img, cached_full_image);
                     }
                 }
 
@@ -116,15 +121,6 @@ namespace MDLoader
                 Mdcontent = sr.ReadToEnd();
                 LastSavedMdcontent = Mdcontent;
                 sr.Close();
-
-                HtmlDocument doc = browser.Document;
-                HtmlElementCollection elementcol = doc.GetElementsByTagName("textarea");  //搜索所有的 textarea 标签
-                foreach (HtmlElement ele in elementcol)
-                {
-                    if (ele.GetAttribute("name") == "test-editormd-markdown-doc")
-                        ele.SetAttribute("value", Mdcontent);
-                    browser.Refresh();
-                }
                 return true;
             }
             catch
@@ -132,6 +128,11 @@ namespace MDLoader
                 return false;
             }
         }
+        /// <summary>
+        /// 保存文件到指定目录
+        /// </summary>
+        /// <param name="file"></param>
+        /// <returns></returns>
         public bool SaveFile(string file)
         {
             try
@@ -159,15 +160,7 @@ namespace MDLoader
             //md文件路径
             MdFilePath = "";
 
-            //clear editor.md 中的本文
-            HtmlDocument doc = browser.Document;
-            HtmlElementCollection elementcol = doc.GetElementsByTagName("textarea");  //搜索所有的 textarea 标签
-            foreach (HtmlElement ele in elementcol)
-            {
-                if (ele.GetAttribute("name") == "test-editormd-markdown-doc")
-                    ele.SetAttribute("value", Mdcontent);
-            }
-            browser.Refresh();
+            SetUserSideMD(browser);
             //doc.InvokeScript("Redraw");  
         }
         public void FTPUpload(ref DataGridView dgvtorefresh)
@@ -204,13 +197,13 @@ namespace MDLoader
                 if (!pic.Contains(":"))
                 {
                     s_remotehttpurl = httproot + pic;
-                    s_cached_full_image = Application.StartupPath + "\\readcache\\" + pic.Replace("./", "").Replace("/", "\\");
+                    s_cached_full_image = Application.StartupPath + "\\"+Program.cacheFolder+"\\" + pic.Replace("./", "").Replace("/", "\\");
                     s_remoteurl = ftproot + pic;
                 }
                 else
                 {
                     s_remotehttpurl = httproot + System.IO.Path.GetFileName(pic);
-                    s_cached_full_image = Application.StartupPath + "\\readcache\\" + System.IO.Path.GetFileName(pic);
+                    s_cached_full_image = Application.StartupPath + "\\"+Program.cacheFolder+"\\" + System.IO.Path.GetFileName(pic);
                     s_remoteurl = ftproot + System.IO.Path.GetFileName(pic);
                 }
                 DataRow dr = dt_UploadPic.NewRow();
@@ -243,7 +236,7 @@ namespace MDLoader
             dt_UploadPic.Rows.Add(drr);
         }
         /// <summary>
-        /// 从editor.md重新加载md文本到适配器，防止用户编辑没有被及时更新
+        /// 从editor.md重新加载md文本到adapter，防止用户编辑没有被及时更新
         /// </summary>
         /// <returns></returns>
         public void GetUserSideMD(WebBrowser browser)
@@ -273,6 +266,7 @@ namespace MDLoader
         }
         /// <summary>
         /// 切换md文本中的图片地址
+        /// 本地图片与网络图片互相切换
         /// </summary>
         /// <returns></returns>
         public void SwitchPicture(WebBrowser browser, Picture_mode type)
@@ -280,7 +274,7 @@ namespace MDLoader
             GetUserSideMD(browser);
             if (type == Picture_mode.remote)
             {
-                view = Picture_mode.remote;
+                //view = Picture_mode.remote;
                 for (int i = 0; i < dt_UploadPic.Rows.Count - 1; i++)
                 {
                     Mdcontent = Mdcontent.Replace(dt_UploadPic.Rows[i]["Local File"].ToString(), dt_UploadPic.Rows[i]["Remote File"].ToString());
@@ -288,7 +282,7 @@ namespace MDLoader
             }
             else
             {
-                view = Picture_mode.local;
+                //view = Picture_mode.local;
                 for (int i = 0; i < dt_UploadPic.Rows.Count - 1; i++)
                 {
                     Mdcontent = Mdcontent.Replace(dt_UploadPic.Rows[i]["Remote File"].ToString(), dt_UploadPic.Rows[i]["Local File"].ToString());
